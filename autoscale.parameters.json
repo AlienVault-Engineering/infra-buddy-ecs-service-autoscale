@@ -1,0 +1,23 @@
+[
+  {
+    "ParameterKey": "Environment",
+    "ParameterValue": "${ENVIRONMENT}"
+  },
+  {
+    "ParameterKey": "ClusterStack",
+    "ParameterValue": "${CLUSTER_STACK_NAME}"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "${SERVICE_NAME}"
+  },
+  {
+    "ParameterKey": "MaxCapacity",
+    "ParameterValue": "${MAX_CAPACITY}"
+  },
+  {
+    "ParameterKey": "MinCapacity",
+    "ParameterValue": "${MIN_CAPACITY}"
+  }
+]
+

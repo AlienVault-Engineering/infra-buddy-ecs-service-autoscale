@@ -1,0 +1,23 @@
+{
+
+  "SERVICE_NAME": {
+    "type": "export",
+    "stack": "${SERVICE_STACK_NAME}",
+    "value": "ECSServiceName"
+  },
+  "MAX_CAPACITY": {
+    "type": "property",
+    "key": "MAX_CAPACITY",
+    "default": 5
+  },
+  "MIN_CAPACITY": {
+    "type": "property",
+    "key": "MIN_CAPACITY",
+    "default": 1
+  },
+  "DOMAIN": {
+    "type": "property",
+    "key": "DEFAULT_DOMAIN",
+    "default": ""
+  }
+}
