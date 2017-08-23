@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "${SERVICE_NAME}"
+    "ParameterValue": "${SERVICE_STACK_NAME}"
   },
   {
     "ParameterKey": "MaxCapacity",

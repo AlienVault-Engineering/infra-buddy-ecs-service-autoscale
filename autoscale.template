@@ -10,7 +10,7 @@
       "Description": "ECS Cluster stack name to deploy service into",
       "Type": "String"
     },
-    "ServiceName": {
+    "ServiceStackName": {
       "Description": "Service Name",
       "Type": "String"
     },
@@ -24,131 +24,175 @@
     }
   },
   "Resources": {
-    "ServiceScalingTarget":{
-         "Type":"AWS::ApplicationAutoScaling::ScalableTarget",
-         "Properties":{
-           "MaxCapacity":{ "Ref": "MaxCapacity" },
-           "MinCapacity":{ "Ref": "MinCapacity" },
-           "ResourceId":{
-             "Fn::Join":[
-               "",
-               [
-                 "service/",
-                 {"Fn::ImportValue" : {"Fn::Sub" : "${ClusterStack}-ECSCluster"}},
-                 "/",
-                 { "Ref": "ServiceName" }
-               ]
-             ]
-           },
-           "RoleARN":{
-             "Fn::GetAtt":[
-               "AutoscalingRole",
-               "Arn"
-             ]
-           },
-           "ScalableDimension":"ecs:service:DesiredCount",
-           "ServiceNamespace":"ecs"
-         }
-       },
-     "ServiceScaleUpPolicy":{
-         "Type":"AWS::ApplicationAutoScaling::ScalingPolicy",
-         "Properties":{
-           "PolicyName":{ "Fn::Sub":"${ServiceName}-ServiceScaleUpPolicy"},
-           "PolicyType":"StepScaling",
-           "ScalingTargetId":{
-             "Ref":"ServiceScalingTarget"
-           },
-           "StepScalingPolicyConfiguration":{
-             "AdjustmentType":"PercentChangeInCapacity",
-             "Cooldown":180,
-             "MetricAggregationType":"Average",
-             "MinAdjustmentMagnitude":1,
-             "StepAdjustments":[
-               {
-                 "MetricIntervalLowerBound":0,
-                 "ScalingAdjustment":150
-               }
-             ]
-           }
-         }
-       },
-    "ServiceScaleDownPolicy":{
-         "Type":"AWS::ApplicationAutoScaling::ScalingPolicy",
-         "Properties":{
-           "PolicyName":{ "Fn::Sub":"${ServiceName}-ServiceScaleDownPolicy"},
-           "PolicyType":"StepScaling",
-           "ScalingTargetId":{
-             "Ref":"ServiceScalingTarget"
-           },
-           "StepScalingPolicyConfiguration":{
-             "AdjustmentType":"PercentChangeInCapacity",
-             "Cooldown":60,
-             "MetricAggregationType":"Average",
-             "StepAdjustments":[
-               {
-                 "MetricIntervalLowerBound":0,
-                 "ScalingAdjustment":-25
-               }
-             ]
-           }
-         }
-       },
-     "AutoscalingRole":{
-         "Type":"AWS::IAM::Role",
-         "Properties":{
-           "AssumeRolePolicyDocument":{
-             "Statement":[
-               {
-                 "Effect":"Allow",
-                 "Principal":{
-                   "Service":[
-                     "application-autoscaling.amazonaws.com"
-                   ]
-                 },
-                 "Action":[
-                   "sts:AssumeRole"
-                 ]
-               }
-             ]
-           },
-           "Path":"/",
-           "Policies":[
-             {
-               "PolicyName":"service-autoscaling",
-               "PolicyDocument":{
-                 "Statement":[
-                   {
-                     "Effect":"Allow",
-                     "Action":[
-                       "application-autoscaling:*",
-                       "cloudwatch:DescribeAlarms",
-                       "cloudwatch:PutMetricAlarm",
-                       "ecs:DescribeServices",
-                       "ecs:UpdateService"
-                     ],
-                     "Resource":"*"
-                   }
-                 ]
-               }
-             }
-           ]
-         }
-       }
+    "ServiceScalingTarget": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": {
+          "Ref": "MaxCapacity"
+        },
+        "MinCapacity": {
+          "Ref": "MinCapacity"
+        },
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${ClusterStack}-ECSCluster"
+                }
+              },
+              "/",
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${ServiceStackName}-ECSServiceName"
+                }
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::GetAtt": [
+            "AutoscalingRole",
+            "Arn"
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      }
+    },
+    "ServiceScaleUpPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${ServiceStackName}-ECSServiceName"
+                }
+              },
+              "-ServiceScaleUpPolicy"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalingTargetId": {
+          "Ref": "ServiceScalingTarget"
+        },
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": 180,
+          "MetricAggregationType": "Average",
+          "MinAdjustmentMagnitude": 1,
+          "StepAdjustments": [
+            {
+              "MetricIntervalLowerBound": 0,
+              "ScalingAdjustment": 150
+            }
+          ]
+        }
+      }
+    },
+    "ServiceScaleDownPolicy": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${ServiceStackName}-ECSServiceName"
+                }
+              },
+              "-ServiceScaleDownPolicy"
+            ]
+          ]
+        },
+        "PolicyType": "StepScaling",
+        "ScalingTargetId": {
+          "Ref": "ServiceScalingTarget"
+        },
+        "StepScalingPolicyConfiguration": {
+          "AdjustmentType": "PercentChangeInCapacity",
+          "Cooldown": 60,
+          "MetricAggregationType": "Average",
+          "StepAdjustments": [
+            {
+              "MetricIntervalLowerBound": 0,
+              "ScalingAdjustment": -25
+            }
+          ]
+        }
+      }
+    },
+    "AutoscalingRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "application-autoscaling.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyName": "service-autoscaling",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "application-autoscaling:*",
+                    "cloudwatch:DescribeAlarms",
+                    "cloudwatch:PutMetricAlarm",
+                    "ecs:DescribeServices",
+                    "ecs:UpdateService"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
   },
   "Outputs": {
-
     "ServiceScaleUpPolicy": {
       "Description": "The task name of the  contribution api",
       "Value": {
         "Ref": "ServiceScaleUpPolicy"
       },
-                    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ServiceScaleUpPolicy" }}
-    },"ServiceScaleDownPolicy": {
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-ServiceScaleUpPolicy"
+        }
+      }
+    },
+    "ServiceScaleDownPolicy": {
       "Description": "The task name of the  contribution api",
       "Value": {
         "Ref": "ServiceScaleDownPolicy"
       },
-                    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-ServiceScaleDownPolicy" }}
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-ServiceScaleDownPolicy"
+        }
+      }
     }
   }
 }

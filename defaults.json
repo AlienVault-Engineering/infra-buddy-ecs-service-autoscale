@@ -1,10 +1,5 @@
 {
 
-  "SERVICE_NAME": {
-    "type": "export",
-    "stack": "${SERVICE_STACK_NAME}",
-    "value": "ECSServiceName"
-  },
   "MAX_CAPACITY": {
     "type": "property",
     "key": "MAX_CAPACITY",
