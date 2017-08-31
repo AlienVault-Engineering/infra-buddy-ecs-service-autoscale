@@ -9,10 +9,5 @@
     "type": "property",
     "key": "MIN_CAPACITY",
     "default": 1
-  },
-  "DOMAIN": {
-    "type": "property",
-    "key": "DEFAULT_DOMAIN",
-    "default": ""
   }
 }
