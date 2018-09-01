@@ -8,7 +8,7 @@
     "ParameterValue": "${CLUSTER_STACK_NAME}"
   },
   {
-    "ParameterKey": "ServiceName",
+    "ParameterKey": "ServiceStackName",
     "ParameterValue": "${ECS_SERVICE_STACK_NAME}"
   },
   {
